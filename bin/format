@@ -121,13 +121,17 @@ done
 }
 
 # this method will format one file
-# 1 is the filename/filename with path 
+# 1 is the filename/filename with path with an exception for Jenkinsfiles
 format() {
     local i=${1}
     local filename=${i##*/}
-    if [[ $filename = [!.]*.* ]] ; then
+    if [[ $filename = *"Jenkinsfile"* ]] ; then
+        ln -s ${1} ${1}.groovy
+        formatByExtension "${1}.groovy"
+        rm -rf ${1}.groovy
+        elif [[ $filename = [!.]*.* ]] ; then
         formatByExtension "$1"
-    elif [[ ! -d "${1}" ]] && [[  -f "${1}" ]] && [[  -s "${1}" ]] ; then
+        elif [[ ! -d "${1}" ]] && [[  -f "${1}" ]] && [[  -s "${1}" ]] ; then
         formatByHashBang "$1"
     fi
 }
